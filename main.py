@@ -11,13 +11,17 @@ app.secret_key = 'y337'
 class Blog(db.Model):
 
    id = db.Column(db.Integer, primary_key=True)
-   name = db.Column(db.String(120))
-   completed = db.Column(db.Boolean)
-   owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))   
+   title = db.Column(db.String(120))
+   body_text = db.Column(db.String(240))
+   owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+   completed = db.Column(db.Boolean)   
 
-   def __init__(self, name):
-       self.name = name
+   def __init__(self, title, body_text, owner):
+       self.title = title
+       self.body_text = body_text
+       self.owner = owner
        self.completed = False
+      
 
 class User(db.Model):
 
@@ -29,9 +33,8 @@ class User(db.Model):
     def __init__(self, email, password):
         self.email = email
         self.password = password
-        self.owner = owner
 
-"""@app.before_request
+@app.before_request
 def require_login():
     allowed_routes = ['login', 'register']
     if request.endpoint not in allowed_routes and 'email' not in session:
@@ -81,25 +84,24 @@ def register():
 @app.route('/logout')
 def logout():
     del session['email']
-    return redirect('/')"""
+    return redirect('/')
 
 @app.route('/', methods=['POST','GET'])
 def index():
 
-
     owner = User.query.filter_by(email=session['email']).first()
 
     if request.method == 'POST':
-        posting_name = request.form['posting']
-        new_posting = Blog(posting_name, owner)
+        posting_title = request.form['posting_title']
+        posting_text = request.form['posting_text']
+        new_posting = Blog(posting_title, posting_text, owner)
         db.session.add(new_posting)
         db.session.commit()
     
-        postings = Blog.query.filter_by(completed = False, owner=owner).all()
-        completed_postings = Blog.query.filter_by(completed = True).all()
+    postings = Blog.query.filter_by(completed = False, owner=owner).all()
+    completed_postings = Blog.query.filter_by(completed = True).all()
 
-        return render_template('todos.html', title="Get It Bloged!", postings=postings, 
-            completed_postings=completed_postings)
+    return render_template('blog.html', title="Get It Bloged!", postings=postings, completed_postings=completed_postings)
 
 """@app.route('/delete-task', methods=['POST'])
 def delete_task():

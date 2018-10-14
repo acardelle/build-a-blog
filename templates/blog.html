@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Get It Done!</h1>
+    <form method='post'>
+        <label>
+            New Blog Post:
+            <input type="text" name="posting_title" />
+        </label>
+        <p><textarea name="posting_text"/> </textarea></p>
+        <input type="submit" value='Add Posting' />
+    </form>
+
+    <hr />
+
+    {% if postings|length == 0 %}
+    <p>No postings yet</p>
+    {% else %}
+
+    <ul>
+        {% for posting in postings %}
+        <li>{{posting.title}}
+            <p>{{posting.body_text}}</p>
+            
+        </li>
+            <form method='post' action="/delete-task" style="display:inline-block;"> 
+               <!-- <input type="hidden" name="task-id" value=/> -->
+                <input type="submit" value='Done!' />
+            </form>
+        {% endfor %} 
+    </ul>
+
+    {% endif %}
+
+    <hr />
+
+    <h2>Completed</h2>
+
+    <ul>
+        {%for posting in completed_postings %}
+        <li>{{posting.title}}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}    
