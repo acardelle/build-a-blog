@@ -89,19 +89,29 @@ def logout():
 @app.route('/', methods=['POST','GET'])
 def index():
 
+    postings = Blog.query.filter_by(completed = False).all()
+    completed_postings = Blog.query.filter_by(completed = True).all()
+
+    return render_template('blog.html', title="Get It Bloged!", postings=postings, completed_postings=completed_postings)
+
+@app.route('/newpost', methods=['POST','GET'])
+def newpost():
+
     owner = User.query.filter_by(email=session['email']).first()
 
     if request.method == 'POST':
         posting_title = request.form['posting_title']
         posting_text = request.form['posting_text']
-        new_posting = Blog(posting_title, posting_text, owner)
-        db.session.add(new_posting)
-        db.session.commit()
-    
-    postings = Blog.query.filter_by(completed = False, owner=owner).all()
-    completed_postings = Blog.query.filter_by(completed = True).all()
+        if (posting_title = '') or (posting_text != ''):
+            new_posting = Blog(posting_title, posting_text, owner)
+            db.session.add(new_posting)
+            db.session.commit()
+            return redirect('/')
+        else:
+            return render_template('newpost.html')
+    else:
+        return render_template('newpost.html')
 
-    return render_template('blog.html', title="Get It Bloged!", postings=postings, completed_postings=completed_postings)
 
 """@app.route('/delete-task', methods=['POST'])
 def delete_task():
