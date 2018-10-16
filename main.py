@@ -109,7 +109,8 @@ def newpost():
             new_posting = Blog(posting_title, posting_text, owner)
             db.session.add(new_posting)
             db.session.commit()
-            return redirect('/')
+            grab_id = str(new_posting.id)
+            return redirect('/indypost?id=' + grab_id)
     else:
         return render_template('newpost.html')
 
