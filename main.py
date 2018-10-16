@@ -102,17 +102,24 @@ def newpost():
     if request.method == 'POST':
         posting_title = request.form['posting_title']
         posting_text = request.form['posting_text']
-        if (posting_title == '' == False) or (posting_text == '' == False):
+        if (posting_title == '') or (posting_text == ''):
+            post_error = 'Please provide a blog post title and post body.'
+            return render_template('newpost.html',post_error=post_error)
+        else:
             new_posting = Blog(posting_title, posting_text, owner)
             db.session.add(new_posting)
             db.session.commit()
             return redirect('/')
-        else:
-            post_error = 'Please provide a blog post title and post body.'
-            return render_template('newpost.html',post_error=post_error)
     else:
         return render_template('newpost.html')
 
+@app.route('/indypost', methods=['POST','GET'])
+def indypost():
+    
+    id_d = request.args.get('id')
+    case_post = Blog.query.filter_by(id=id_d).first()
+
+    return render_template('indypost.html', case_post=case_post)
 
 """@app.route('/delete-task', methods=['POST'])
 def delete_task():

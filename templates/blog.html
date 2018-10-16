@@ -10,8 +10,9 @@
     <p>No postings yet</p>
     {% else %}
     {% for posting in postings %}
-    <b>{{posting.title}}</b>
+    <b><a href='/indypost?id={{posting.id}}' name={{posting.id}} value={{posting.id}}>{{posting.title}}</a></b>
     <p>{{posting.body_text}}</p>
+    <p>{{posting.id}}</p>
             
         </li>
             <form method='post' action="/delete-task" style="display:inline-block;"> 
